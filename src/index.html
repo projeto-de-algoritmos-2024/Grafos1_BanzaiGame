@@ -3,22 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Banzai !</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="output.css">
 </head>
-<body>
-    <div id="grid-container" > </div>
-    <script src="script.js" type="module"></script>
-    <div id="info-panel">
-            <p id="info-player-turn">
-                Player red turn !
-            </p>
-            <p id="info-clicks-left">
-                0 clicks left !
-            </p>
-            <p id="info-players-points">
-                Red: 0 Blue: 0
-            </p>
-    </div>
+<body class="flex flex-col justify-center items-center bg-stone-950" id="panel-div">
 
+    <div class="flex flex-col justify-center items-center w-[50%] h-[100%]">
+        <div class="flex flex-row justify-around p-6 gap-[1em]">
+
+            <div class="bg-stone-900 p-6 rounded-md drop-shadow-lg border-2 border-500-neutral text-white">
+                <p>Red points:</p>
+                <p  id="red-counter"> 0 </p>
+            </div>
+
+            <div class="bg-stone-900 p-6 rounded-md drop-shadow-lg border-2 border-500-neutral text-white">
+                <p id="info-player-turn"> Player red turn !</p>
+                <p id="info-clicks-left"> 0 clicks left </p>
+            </div>
+
+
+            <div class="bg-stone-900 p-6 rounded-md drop-shadow-lg border-2 border-500-neutral text-white">
+                <p>Blue points:</p>
+                <p id="blue-counter"> 0 </p>
+            </div>
+        </div>
+
+        <div
+                class="grid grid-cols-10 bg-stone-900 p-6 rounded-md drop-shadow-lg border-2 border-500-neutral
+                h-[35em]  aspect-square"
+                id="grid-container">
+        </div>
+
+    </div>
+    <script src="script.js" type="module"></script>
 </body>
 </html>

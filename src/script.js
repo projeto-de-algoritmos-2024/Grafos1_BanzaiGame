@@ -24,8 +24,11 @@ function updateClicksLeftPanel() {
 }
 
 function updatePlayersPointsPanel() {
-    let playersPointsParagraph = document.getElementById("info-players-points");
-    playersPointsParagraph.innerText =  `Red: ${playerPointsCounter[0]}, Blue: ${playerPointsCounter[1]}`
+    let redCounter = document.getElementById("red-counter");
+    redCounter.innerText = `${playerPointsCounter[0]}`
+
+    let blueCounter = document.getElementById("blue-counter");
+    blueCounter.innerText = `${playerPointsCounter[1]}`
 }
 
 function updatePlayerTurnPanel() {
@@ -74,6 +77,8 @@ function handleCellClick(square) {
 
     clicksLeft--;
     totCellsPainted++;
+    console.log(`clicks left: ${clicksLeft}`)
+    console.log(`player: ${currentPlayerIndex}`)
     if (clicksLeft === 0) {
         clicksLeft = getRandomClicks();
         currentPlayerIndex = Math.abs(currentPlayerIndex-1);
@@ -91,18 +96,24 @@ function handleCellClick(square) {
 
 function buildSquare(r, c) {
     let square = document.createElement('div');
-    square.classList.add('square');
+    square.classList.add('bg-stone-900');
+    square.classList.add('border-2');
+    square.classList.add('border-neutral-400');
+    square.classList.add('p-5');
+    square.classList.add('rounded-md');
+    square.classList.add('w-full');
+    square.classList.add('h-full');
+
     square.id = `square-${r}-${c}`
     square.addEventListener('click', () => {handleCellClick(square)})
-    // I couldn't pass it to the CSS (yet)
-    square.style.width = `${100/ gridWidth}%`
     return square;
 }
 
 function fillClosedSquares(color) {
-    for (let row of gridContainer.children) {
-        for(let cell of row.children) {
-            if (!cell.style.backgroundColor && paintable(cell, color)) {
+    for (let x = 0; x < gridHeight; x++) {
+        for (let y = 0; y < gridWidth; y++) {
+            let cell = document.getElementById(`square-${x}-${y}`);
+            if (! cell.style.backgroundColor && paintable(cell, color)) {
                 cell.style.backgroundColor = color;
                 totCellsPainted++;
                 playerPointsCounter[currentPlayerIndex]++;
@@ -144,7 +155,7 @@ function paintable(cell, color) {
             let nx = x + dx, ny = y + dy;
             let newCell = getCellByCoordinate(nx, ny);
 
-            if (getCellColor(newCell) == color || visited[nx][ny]) continue;
+            if (getCellColor(newCell) === color || visited[nx][ny]) continue;
 
             visited[nx][ny] = true;
 
@@ -172,9 +183,10 @@ export function initializeGrid() {
     for (let r = 0; r < gridHeight; r++) {
         let row = buildRow(r);
         for (let c = 0; c < gridWidth; c++) {
+            gridContainer.appendChild(buildSquare(r,c));
             row.appendChild(buildSquare(r, c));
         }
-        gridContainer.appendChild(row);
+        //gridContainer.appendChild(row);
     }
 }
 

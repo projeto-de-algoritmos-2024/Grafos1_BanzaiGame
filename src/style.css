@@ -1,14 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
-#grid-container {
-    border: red solid 4px;
-    max-width: 50%;
-    max-height: 50%;
-    aspect-ratio: 1 / 1;
+#info-panel {
+    max-width: 75%;
+    max-height: 10%;
 }
 
 .square {
@@ -18,4 +20,7 @@ html, body {
 .row {
     display: flex;
     flex-direction: row;
+}
+
+.points-counter {
 }
