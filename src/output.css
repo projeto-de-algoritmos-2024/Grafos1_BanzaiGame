@@ -981,8 +981,9 @@ html, body {
   max-height: 10%;
 }
 
-.square {
-  border: black 1px solid;
+.square:hover {
+  opacity: 0.9;
+  cursor: pointer;
 }
 
 .row {
@@ -990,5 +991,14 @@ html, body {
   flex-direction: row;
 }
 
-.points-counter {
+p {
+  text-align: center;
+}
+
+* {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+#color-player-turn {
+  transition: transform 0.15s ease;
 }
