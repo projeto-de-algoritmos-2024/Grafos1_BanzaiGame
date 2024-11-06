@@ -63,13 +63,13 @@ function buildRow(rowId) {
 
 function announceWinner() {
     if (playerPointsCounter[0] > playerPointsCounter[1]) {
-        alert(`player 0 wins !`)
+        alert(`Player ${playersColors[0]} wins!`)
     }
     else if (playerPointsCounter[0] < playerPointsCounter[1]) {
-        alert(`player 1 wins !`)
+        alert(`Player ${playersColors[1]} wins!`)
     }
     else {
-        alert("Draw !")
+        alert("Draw!")
     }
 }
 
@@ -185,24 +185,28 @@ function getCellColor(cell) {
 }
 
 function dfs_to_paint(startingCell, color) {
-    if (getCellColor(startingCell))
-        return [];
-
     let visited = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
     let stack = [startingCell];
+    let coloredStack = [];
     let to_paint = []
-
-    let [sx, sy] = getCellCoordinates(startingCell);
-    visited[sx][sy] = true;
 
     // My goal is to not being able to reach the boundaries
     // I can only visit other colors different than mine
     // If I reach my goal, the cell is paintable.
 
-    while(stack.length != 0) {
+    while(stack.length + coloredStack.length != 0) {
+        // Cells not colored have priority
+        // once the animation is better
+        if (stack.length == 0) {
+            [stack, coloredStack] = [coloredStack, stack];
+        }
+
         let cell = stack.pop();
         let [x, y] = getCellCoordinates(cell);
         
+        if (visited[x][y]) continue;
+        visited[x][y] = true;
+
         if (!getCellColor(cell))
             to_paint.push(cell)
 
@@ -213,16 +217,14 @@ function dfs_to_paint(startingCell, color) {
         for (let [dx, dy] of directions) {
             let nx = x + dx, ny = y + dy;
             let newCell = getCellByCoordinate(nx, ny);
+            let newCellColor = getCellColor(newCell);
 
-            if (getCellColor(newCell) === color || visited[nx][ny]) continue;
+            if (newCellColor === color || visited[nx][ny]) continue;
 
-            visited[nx][ny] = true;
-
-            stack.push(newCell);
+            newCellColor ? coloredStack.push(newCell) : stack.push(newCell);
         }
     }
 
-    console.log(to_paint)
     return to_paint;
 }
 
@@ -244,11 +246,14 @@ export function gameIsDone() {
 }
 
 export function initializeGrid() {
+    playerPointsCounter.fill(0);
     totCellsPainted = 0;
     currentPlayerIndex = 0;
     clicksLeft = getRandomClicks();
+
     updateClicksLeftPanel();
     updatePlayerTurnPanel();
+    updatePlayersPointsPanel();
 
     gameStarted = true;
 
