@@ -1,6 +1,6 @@
 # Grafos1_BanzaiGame
 
-_Número da lista:_ 10
+_Número da lista:_ 45
 _Conteúdo da disciplina:_ Grafos 1
 
 ## Alunos
@@ -12,34 +12,34 @@ _Conteúdo da disciplina:_ Grafos 1
 
 ## Sobre
 
-Neste projeto de Grafos 1 implementamos um jogo multiplayer (2 jogadores) local onde os dois player se revezam em turnos para colorir um grid, no início de cada turno o jogador recebe uma quantidade aleatória de movimentos que pode usar para colorir uma célula do grid ainda não preenchida, toda vez que um jogador fecha uma área com sua cor todas as céulas não coloridas contidas nessa área são coloridas com sua respecitva cor.
+Neste projeto de Grafos 1 implementamos um jogo multiplayer (2 jogadores) local onde os dois players se revezam em turnos para colorir uma matriz. No início de cada turno, o jogador recebe uma quantidade aleatória de movimentos que deve ser usado para colorir uma célula da matriz ainda não preenchida. Toda vez que um jogador fecha uma área com sua cor, todas as céulas não coloridas contidas nessa área são coloridas com sua respectiva cor.
 
-O projeto foi fortemente inspirado no minigame "banzai" do habboo hotel.
+O projeto foi fortemente inspirado no minigame "banzai" do Habbo Hotel.
 
 ## Screenshot
 
-Examplo de partida :
+Examplo de partida:
 
 ![Partida](./media/match-example.gif)
 
 ## Uso
 
-Com o Node instalado, e estando na raiz do projeto execute :
+Com o Node instalado e estando na raiz do projeto execute:
 
 ```sh
 npx http-server ./src/
 ```
 
-Acesse o endereço e porta fornecidos e divirta-se !
+Acesse o endereço e porta fornecidos e divirta-se!
 
-## Executando em modo desenvolvimento
+## Executando em modo de desenvolvimento
 
-### Habilitando tailwind
+### Habilitando o Tailwind
 
-Certifique-se de possuir o tailwind instalado de acordo com a [documentação](https://tailwindcss.com/docs/installation).
+Certifique-se de possuir o Tailwind instalado de acordo com a [documentação](https://tailwindcss.com/docs/installation).
 
-Depois execute os seguinte comando para gerar o CSS a medida em que o código fonte for alterado.
+Depois execute o comando abaixo para gerar o CSS a medida em que o código fonte for alterado.
 
-`sh
+```sh
 npx tailwindcss -i ./src/style.css -o ./src/output.css --watch
-`
+```
