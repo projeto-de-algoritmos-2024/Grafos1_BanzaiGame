@@ -11,3 +11,5 @@ export const playersColors = ['red', 'blue'];
 
 export const minimumNumberOfClicksPerTurn = 1;
 export const maximumNumberOfClicksPerTurn = 10;
+
+export const paintCellsTimeout = 0.2 * 1000;
