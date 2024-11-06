@@ -5,12 +5,15 @@ import {
     directions,
     playersColors,
     numberOfPlayers,
+    paintCellsTimeout,
     maximumNumberOfClicksPerTurn, minimumNumberOfClicksPerTurn
 } from "./constants.js";
 
 let totCellsPainted = 0;
 let currentPlayerIndex = 0;
 let clicksLeft = 0;
+let gameStarted = true;
+let roundBlocked = false;
 let playerPointsCounter = Array.from({length: numberOfPlayers}, () => 0);
 
 function debug() {
@@ -32,8 +35,13 @@ function updatePlayersPointsPanel() {
 }
 
 function updatePlayerTurnPanel() {
-    let playerTurnParagraph = document.getElementById("info-player-turn");
-    playerTurnParagraph.innerText = `Player ${playersColors[currentPlayerIndex]} turn !`
+    let infoPlayerTurn = document.getElementById("info-player-turn");
+    let colorPlayerTurn = document.getElementById("color-player-turn");
+    let currentColor = playersColors[currentPlayerIndex];
+
+    colorPlayerTurn.style.color = currentColor;
+    colorPlayerTurn.innerText = currentColor;
+    infoPlayerTurn.style.borderColor = currentColor;
 }
 
 function getRandomClicks() {
@@ -42,7 +50,6 @@ function getRandomClicks() {
         (maximumNumberOfClicksPerTurn-minimumNumberOfClicksPerTurn)
         +minimumNumberOfClicksPerTurn);
 }
-
 
 // Just like aztecs and maya did before the advent of structs and constructors :D
 function buildRow(rowId) {
@@ -66,19 +73,25 @@ function announceWinner() {
     }
 }
 
-function handleCellClick(square) {
-    // not 100% sure how this works
+async function handleCellClick(square) {
     if (square.style.backgroundColor)
         return;
+    
+    // Players should not be able to paint
+    // while this function is on action
+    roundBlocked = true;
 
+    // Now we paint and update the clicks left
     square.style.backgroundColor = playersColors[currentPlayerIndex];
     playerPointsCounter[currentPlayerIndex]++;
-    fillClosedSquares(square.style.backgroundColor);
-
     clicksLeft--;
     totCellsPainted++;
-    console.log(`clicks left: ${clicksLeft}`)
-    console.log(`player: ${currentPlayerIndex}`)
+    
+    updateClicksLeftPanel();
+
+    // Now we fill the adjacent squares
+    await fillAdjacentSquares(square);
+
     if (clicksLeft === 0) {
         clicksLeft = getRandomClicks();
         currentPlayerIndex = Math.abs(currentPlayerIndex-1);
@@ -88,13 +101,16 @@ function handleCellClick(square) {
     updatePlayersPointsPanel();
     updatePlayerTurnPanel();
 
+    console.log(totCellsPainted);
     if (gameIsDone()) {
         announceWinner();
         initializeGrid();
     }
+
+    roundBlocked = false;
 }
 
-function buildSquare(r, c) {
+function buildSquare(r, c, color) {
     let square = document.createElement('div');
     square.classList.add('bg-stone-900');
     square.classList.add('border-2');
@@ -103,22 +119,54 @@ function buildSquare(r, c) {
     square.classList.add('rounded-md');
     square.classList.add('w-full');
     square.classList.add('h-full');
+    square.classList.add('square')
+
+    if (color)
+        square.style.backgroundColor = color
 
     square.id = `square-${r}-${c}`
-    square.addEventListener('click', () => {handleCellClick(square)})
+    square.addEventListener('click', () => {
+        if (gameStarted && !roundBlocked)
+            handleCellClick(square)
+    })
     return square;
 }
 
-function fillClosedSquares(color) {
-    for (let x = 0; x < gridHeight; x++) {
-        for (let y = 0; y < gridWidth; y++) {
-            let cell = document.getElementById(`square-${x}-${y}`);
-            if (! cell.style.backgroundColor && paintable(cell, color)) {
-                cell.style.backgroundColor = color;
-                totCellsPainted++;
-                playerPointsCounter[currentPlayerIndex]++;
-            }
-        }
+async function timeout(delay) {
+    return new Promise((res) => setTimeout(res, delay))
+}
+
+async function paint_cells(cells, color) {
+    // This is because we want the cells animated
+    // Probably this is not the best way to do it
+    totCellsPainted += cells.length;
+    playerPointsCounter[currentPlayerIndex] += cells.length;
+
+    for (let cell of cells) {
+        await timeout(paintCellsTimeout);
+        cell.style.backgroundColor = color;
+    }
+
+    // Let's wait the colors to be painted
+    // completely
+    if (cells.length)
+        await timeout(paintCellsTimeout);
+}
+
+async function fillAdjacentSquares(cell) {
+    let [x, y] = getCellCoordinates(cell);
+    let color = getCellColor(cell);
+
+    for(let [dx, dy] of directions) {
+        let nx = x + dx, ny = y + dy; 
+
+        if (nx < 0 || ny < 0 || nx >= gridHeight || ny >= gridWidth)
+            continue;
+        
+        let cellCandidate = getCellByCoordinate(nx, ny);
+        let to_paint = dfs_to_paint(cellCandidate, color);
+
+        await paint_cells(to_paint, color);
     }
 }
 
@@ -136,19 +184,30 @@ function getCellColor(cell) {
     return cell.style.backgroundColor;
 }
 
-function paintable(cell, color) {
+function dfs_to_paint(startingCell, color) {
+    if (getCellColor(startingCell))
+        return [];
+
     let visited = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
-    let stack = [cell];
+    let stack = [startingCell];
+    let to_paint = []
+
+    let [sx, sy] = getCellCoordinates(startingCell);
+    visited[sx][sy] = true;
 
     // My goal is to not being able to reach the boundaries
     // I can only visit other colors different than mine
     // If I reach my goal, the cell is paintable.
 
     while(stack.length != 0) {
-        let [x, y] = getCellCoordinates(stack.pop());
+        let cell = stack.pop();
+        let [x, y] = getCellCoordinates(cell);
+        
+        if (!getCellColor(cell))
+            to_paint.push(cell)
 
         if ((x + 1 >= gridHeight) || (y + 1 >= gridWidth) || x <= 0 || y <= 0) {
-            return false;
+            return [];
         }
 
         for (let [dx, dy] of directions) {
@@ -163,7 +222,19 @@ function paintable(cell, color) {
         }
     }
 
-    return true;
+    console.log(to_paint)
+    return to_paint;
+}
+
+function buildGrid(color) {
+    for (let r = 0; r < gridHeight; r++) {
+        let row = buildRow(r);
+        for (let c = 0; c < gridWidth; c++) {
+            gridContainer.appendChild(buildSquare(r, c, color));
+            row.appendChild(buildSquare(r, c, color));
+        }
+        //gridContainer.appendChild(row);
+    }
 }
 
 // I know, but it may be more complex later
@@ -177,17 +248,12 @@ export function initializeGrid() {
     currentPlayerIndex = 0;
     clicksLeft = getRandomClicks();
     updateClicksLeftPanel();
+    updatePlayerTurnPanel();
+
+    gameStarted = true;
 
     gridContainer.replaceChildren();
-
-    for (let r = 0; r < gridHeight; r++) {
-        let row = buildRow(r);
-        for (let c = 0; c < gridWidth; c++) {
-            gridContainer.appendChild(buildSquare(r,c));
-            row.appendChild(buildSquare(r, c));
-        }
-        //gridContainer.appendChild(row);
-    }
+    buildGrid();
 }
 
 
