@@ -16,11 +16,6 @@ let gameStarted = true;
 let roundBlocked = false;
 let playerPointsCounter = Array.from({length: numberOfPlayers}, () => 0);
 
-function debug() {
-    console.log(currentPlayerIndex);
-    console.log(playerPointsCounter);
-}
-
 function updateClicksLeftPanel() {
     let clicksLeftElement = document.getElementById("info-clicks-left");
     clicksLeftElement.innerText = `${clicksLeft} clicks left`;
@@ -101,7 +96,6 @@ async function handleCellClick(square) {
     updatePlayersPointsPanel();
     updatePlayerTurnPanel();
 
-    console.log(totCellsPainted);
     if (gameIsDone()) {
         announceWinner();
         initializeGrid();
@@ -241,7 +235,6 @@ function buildGrid(color) {
 
 // I know, but it may be more complex later
 export function gameIsDone() {
-    console.log(totCellsPainted, gridHeight*gridWidth)
     return totCellsPainted === gridHeight * gridWidth;
 }
 
