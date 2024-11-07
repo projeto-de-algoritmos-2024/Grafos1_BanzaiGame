@@ -12,7 +12,7 @@ _Conteúdo da disciplina:_ Grafos 1
 
 ## Sobre
 
-Neste projeto de Grafos 1 implementamos um jogo multiplayer (2 jogadores) local onde os dois players se revezam em turnos para colorir uma matriz. No início de cada turno, o jogador recebe uma quantidade aleatória de movimentos que deve ser usado para colorir uma célula da matriz ainda não preenchida. Toda vez que um jogador fecha uma área com sua cor, todas as céulas não coloridas contidas nessa área são coloridas com sua respectiva cor.
+Neste projeto de Grafos 1 implementamos um jogo multiplayer (2 jogadores) local onde os dois players se revezam em turnos para colorir uma matriz. No início de cada turno, o jogador recebe uma quantidade aleatória de movimentos que deve ser usado para colorir uma célula da matriz ainda não preenchida. Toda vez que um jogador fecha uma área com sua cor, todas as células não coloridas contidas nessa área são coloridas com sua respectiva cor.
 
 O projeto foi fortemente inspirado no minigame "banzai" do Habbo Hotel.
 
