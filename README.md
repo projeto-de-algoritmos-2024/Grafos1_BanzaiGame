@@ -18,7 +18,7 @@ O projeto foi fortemente inspirado no minigame "banzai" do Habbo Hotel.
 
 ## Screenshot
 
-Examplo de partida:
+Exemplo de partida:
 
 ![Partida](./media/match-example.gif)
 
