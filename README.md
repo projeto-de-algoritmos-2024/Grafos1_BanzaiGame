@@ -3,6 +3,10 @@
 _Número da lista:_ 45
 _Conteúdo da disciplina:_ Grafos 1
 
+## Vídeo da Entrega
+
+Link no [YouTube](https://www.youtube.com/watch?v=ta9wZu-m77w&ab_channel=CaioFelipe)
+
 ## Alunos
 
 | Matrícula  | Aluno                       |
